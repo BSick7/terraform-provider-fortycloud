@@ -4,14 +4,14 @@ import (
 )
 
 type Config struct {
-	User          string
-	Password      string
+    User          string
+    Password      string
 }
 
 /*
 // Client() returns a new client for accessing FortyCloud.
 func (c *Config) Client() (interface{}, error) {
-	
-	return client, nil
+    
+    return client, nil
 }
 */

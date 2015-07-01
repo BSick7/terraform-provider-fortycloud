@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform/plugin"
-	"github.com/mdl/terraform-provider-fortycloud/fortycloud"
+    "github.com/hashicorp/terraform/plugin"
+    "github.com/mdl/terraform-provider-fortycloud/fortycloud"
 )
 
 func main() {
-	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: fortycloud.Provider,
-	})
+    plugin.Serve(&plugin.ServeOpts{
+        ProviderFunc: fortycloud.Provider,
+    })
 }
