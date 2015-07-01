@@ -13,7 +13,7 @@ type Config struct {
 }
 
 // Client() returns a new Service for accessing FortyCloud.
-func (c *Config) Client() (*fortycloud.Service, error) {
+func (c *Config) Service() (*fortycloud.Service, error) {
     /*
     service := fortycloud.NewService(&http.Client{
         Transport: &fortycloud.Transport{

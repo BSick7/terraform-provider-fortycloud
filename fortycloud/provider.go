@@ -40,7 +40,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
         Password:      d.Get("password").(string),
     }
     
-    log.Println("[INFO] Initializing Forty Cloud client")
+    log.Println("[INFO] Initializing Forty Cloud service")
 
-    return config.Client()
+    return config.Service()
 }
