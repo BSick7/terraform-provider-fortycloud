@@ -1,6 +1,8 @@
 package fortycloud
 
 import (
+    "log"
+    
     "github.com/hashicorp/terraform/helper/schema"
     "github.com/hashicorp/terraform/terraform"
 )
@@ -28,17 +30,17 @@ func Provider() terraform.ResourceProvider {
             
         },
 
-        //ConfigureFunc: providerConfigure,
+        ConfigureFunc: providerConfigure,
     }
 }
 
-/*
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
     config := Config{
         User:          d.Get("user").(string),
         Password:      d.Get("password").(string),
     }
+    
+    log.Println("[INFO] Initializing Forty Cloud client")
 
     return config.Client()
 }
-*/

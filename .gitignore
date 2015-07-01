@@ -23,5 +23,7 @@ _testmain.go
 *.test
 *.prof
 
+.idea
+
 terraform-provider-fortycloud
 terraform-provider-fortycloud.exe
