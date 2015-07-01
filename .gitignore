@@ -22,3 +22,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+terraform-provider-fortycloud
+terraform-provider-fortycloud.exe
