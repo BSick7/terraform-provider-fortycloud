@@ -11,23 +11,41 @@ import (
 func Provider() terraform.ResourceProvider {
     return &schema.Provider{
         Schema: map[string]*schema.Schema{
-            "user": &schema.Schema{
+            "username": &schema.Schema{
                 Type:        schema.TypeString,
                 Required:    true,
-                DefaultFunc: schema.EnvDefaultFunc("FORTY_CLOUD_USER", nil),
-                Description: "The user name for Forty Cloud.",
+                DefaultFunc: schema.EnvDefaultFunc("FORTY_CLOUD_USERNAME", nil),
+                Description: "The username for Forty Cloud.",
             },
-
             "password": &schema.Schema{
                 Type:        schema.TypeString,
                 Required:    true,
                 DefaultFunc: schema.EnvDefaultFunc("FORTY_CLOUD_PASSWORD", nil),
-                Description: "The user password for Forty Cloud.",
+                Description: "The password for Forty Cloud.",
+            },
+            "tenantName": &schema.Schema{
+                Type:        schema.TypeString,
+                Required:    true,
+                DefaultFunc: schema.EnvDefaultFunc("FORTY_CLOUD_TENANT_NAME", nil),
+                Description: "The tenant for Forty Cloud.",
+            },
+            "formUsername": &schema.Schema{
+                Type:        schema.TypeString,
+                Required:    true,
+                DefaultFunc: schema.EnvDefaultFunc("FORTY_CLOUD_FORM_USERNAME", nil),
+                Description: "The username for web-based authentication",
+            },
+            "formPassword": &schema.Schema{
+                Type:        schema.TypeString,
+                Required:    true,
+                DefaultFunc: schema.EnvDefaultFunc("FORTY_CLOUD_FORM_PASSWORD", nil),
+                Description: "The password for web-based authentication",
             },
         },
 
         ResourcesMap: map[string]*schema.Resource{
-            
+            "fc_connection":                resourceFcConnection(),
+            "fc_subnet":                    resourceFcSubnet(),
         },
 
         ConfigureFunc: providerConfigure,
@@ -36,11 +54,14 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
     config := Config{
-        User:          d.Get("user").(string),
+        Username:      d.Get("username").(string),
         Password:      d.Get("password").(string),
+        TenantName:    d.Get("tenantName").(string),
+        FormUsername:  d.Get("formUsername").(string),
+        FormPassword:  d.Get("formPassword").(string),
     }
     
     log.Println("[INFO] Initializing Forty Cloud service")
 
-    return config.Service()
+    return config.Api()
 }
