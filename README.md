@@ -4,6 +4,9 @@ Terraform provider for Forty Cloud
 ## Usage
 
 ### Provider Configuration
+
+Provider information can be set up in a *.tf file or through environment variables.
+
 ```
 provider "fortycloud" {
 	username = "username"
@@ -13,6 +16,15 @@ provider "fortycloud" {
 	formPassword = "formpassword"
 }
 ```
+
+```
+FORTYCLOUD_USERNAME = "username"
+FORTYCLOUD_PASSWORD = "password"
+FORTYCLOUD_TENANTNAME = "tenant"
+FORTYCLOUD_FORMUSERNAME = "formusername"
+FORTYCLOUD_FORMPASSWORD = "formpassword"
+```
+
 
 ### How to install
 
