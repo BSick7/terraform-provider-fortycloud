@@ -51,6 +51,15 @@ func resourceFcNodeUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceFcNodeDelete(d *schema.ResourceData, meta interface{}) error {
+	api := meta.(*fortycloud.Api)
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return fmt.Errorf("Could not get node id: %s", err)
+	}
+	err = api.Nodes.Delete(id)
+	if err != nil {
+		return fmt.Errorf("Could not delete node: %s", err)
+	}
 	return nil
 }
 
