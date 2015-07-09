@@ -40,6 +40,10 @@ func resourceFcSubnet() *schema.Resource {
 				Type:		schema.TypeBool,
 				Optional:	true,
 			},
+			"gateway_id":   &schema.Schema{
+				Type:		schema.TypeInt,
+				Optional:	true,
+			},
 		},
 	}
 }
@@ -54,6 +58,7 @@ func resourceFcSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 		Subnet: d.Get("subnet").(string),
 		ActualSubnet: d.Get("actual_subnet").(string),
 		NatDisabled: d.Get("nat_disabled").(bool),
+		GatewayId: d.Get("gateway_id").(int),
 	}
 	
 	subnet, err := api.PrivateSubnets.Create(newSubnet)
@@ -83,6 +88,7 @@ func resourceFcSubnetRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("subnet", subnet.Subnet)
 	d.Set("actual_subnet", subnet.ActualSubnet)
 	d.Set("nat_disabled", subnet.NatDisabled)
+	d.Set("gateway_id", subnet.GatewayId)
 
 	return nil
 }
@@ -105,6 +111,7 @@ func resourceFcSubnetUpdate(d *schema.ResourceData, meta interface{}) error {
 	subnet.Subnet = d.Get("subnet").(string)
 	subnet.ActualSubnet = d.Get("actual_subnet").(string)
 	subnet.NatDisabled = d.Get("nat_disabled").(bool)
+	subnet.GatewayId = d.Get("gateway_id").(int)
 	
 	_, err3 := api.PrivateSubnets.Update(subnet)
 	if err3 != nil {
