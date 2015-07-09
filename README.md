@@ -40,3 +40,8 @@ $ git clone git@github.com/BSick7/terraform-provider-fortycloud
 $ go get
 $ go build && cp ./terraform-provider-fortycloud <insert terraform directory>
 ```
+
+
+### How to use
+
+See [examples](/examples) directory for use cases.
