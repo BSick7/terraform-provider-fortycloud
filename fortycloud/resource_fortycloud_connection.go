@@ -18,11 +18,11 @@ func resourceFcConnection() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"peer_a_id": &schema.Schema{
 				Type:       schema.TypeInt,
-				Optional:   false,
+				Required:   true,
 			},
 			"peer_b_id": &schema.Schema{
 				Type:		schema.TypeInt,
-				Optional:	false,
+				Required:	true,
 			},
 		},
 	}

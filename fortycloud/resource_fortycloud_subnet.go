@@ -18,7 +18,7 @@ func resourceFcSubnet() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
 				Type:		schema.TypeString,
-				Optional:	false,
+				Required:	true,
 			},
 			"description": &schema.Schema{
 				Type:		schema.TypeString,
@@ -30,7 +30,7 @@ func resourceFcSubnet() *schema.Resource {
 			},
 			"subnet": &schema.Schema{
 				Type:		schema.TypeString,
-				Optional:	false,
+				Required:	true,
 			},
 			"actual_subnet": &schema.Schema{
 				Type:		schema.TypeString,
@@ -74,7 +74,7 @@ func resourceFcSubnetRead(d *schema.ResourceData, meta interface{}) error {
 	
 	subnet, err2 := api.PrivateSubnets.Get(id)
 	if err2 != nil {
-		return fmt.Errorf("Could not retrieve subnet: %s", err)
+		return fmt.Errorf("Could not retrieve subnet: %s", err2)
 	}
 	
 	d.Set("name", subnet.Name)
