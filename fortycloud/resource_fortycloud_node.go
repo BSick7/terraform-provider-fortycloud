@@ -29,7 +29,7 @@ func resourceFcNode() *schema.Resource {
 }
 
 func resourceFcNodeCreate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	return resourceFcNodeRead(d, meta)
 }
 
 func resourceFcNodeRead(d *schema.ResourceData, meta interface{}) error {
@@ -38,13 +38,16 @@ func resourceFcNodeRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("Error getting node: %s", err)
 	}
+	if node == nil {
+		return fmt.Errorf("Node does not exist.")
+	}
 	d.Set("peer_id", node.Id)
 	d.SetId(strconv.Itoa(node.Id))
 	return nil
 }
 
 func resourceFcNodeUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	return resourceFcNodeRead(d, meta)
 }
 
 func resourceFcNodeDelete(d *schema.ResourceData, meta interface{}) error {

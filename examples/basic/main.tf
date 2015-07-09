@@ -10,7 +10,15 @@ resource "fortycloud_subnet" "subnet2" {
 	subnet = "10.2.0.0/16"
 }
 
-resource "fortycloud_connection" "tooling_canvas1" {
-	peer_a_id = "298"
-	peer_b_id = "297"
+resource "fortycloud_node" "node1" {
+	public_ip = "54.165.11.200"
+}
+
+resource "fortycloud_node" "node2" {
+	public_ip = "54.172.64.69"
+}
+
+resource "fortycloud_connection" "node1_node2" {
+	peer_a_id = "${fortycloud_node.node1.peer_id}"
+	peer_b_id = "${fortycloud_node.node2.peer_id}"
 }
