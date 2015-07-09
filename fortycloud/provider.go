@@ -44,8 +44,8 @@ func Provider() terraform.ResourceProvider {
         },
 
         ResourcesMap: map[string]*schema.Resource{
-            "fc_connection":                resourceFcConnection(),
-            "fc_subnet":                    resourceFcSubnet(),
+            "fortycloud_connection":                resourceFcConnection(),
+            "fortycloud_subnet":                    resourceFcSubnet(),
         },
 
         ConfigureFunc: providerConfigure,
