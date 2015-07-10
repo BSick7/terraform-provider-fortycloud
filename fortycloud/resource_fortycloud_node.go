@@ -2,10 +2,19 @@ package fortycloud
 
 import (
 	"fmt"
+	"log"
 	"strconv"
+	"time"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mdl/fortycloud-sdk-go/api"
 )
+
+type MissingNodeError struct {
+	PublicIP string
+}
+func (err *MissingNodeError) Error() string {
+	return fmt.Sprintf("Could not find node with Public IP=%s.", err.PublicIP)
+}
 
 func resourceFcNode() *schema.Resource {
 	return &schema.Resource{
@@ -29,7 +38,24 @@ func resourceFcNode() *schema.Resource {
 }
 
 func resourceFcNodeCreate(d *schema.ResourceData, meta interface{}) error {
-	return resourceFcNodeRead(d, meta)
+	retryDelay := 15
+	retries := 90 / retryDelay
+	publicip := d.Get("public_ip").(string)
+	for i :=0; i < retries; i++ {
+		err := resourceFcNodeRead(d, meta)
+		if _, ok := err.(*MissingNodeError); ok {
+			if (i+1) == retries {
+				return err
+			}
+			log.Printf("Waiting %d seconds to locate node (%s)...\n", retryDelay, publicip)
+			time.Sleep(time.Duration(retryDelay) * time.Second)
+			continue
+		}
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func resourceFcNodeRead(d *schema.ResourceData, meta interface{}) error {
@@ -39,7 +65,7 @@ func resourceFcNodeRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error getting node: %s", err)
 	}
 	if node == nil {
-		return fmt.Errorf("Node does not exist.")
+		return &MissingNodeError{PublicIP:d.Get("public_ip").(string)}
 	}
 	d.Set("peer_id", node.Id)
 	d.SetId(strconv.Itoa(node.Id))
@@ -56,8 +82,8 @@ func resourceFcNodeDelete(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("Could not get node id: %s", err)
 	}
-	err = api.Nodes.Delete(id)
-	if err != nil {
+	
+	if err := api.Nodes.Delete(id); err != nil {
 		return fmt.Errorf("Could not delete node: %s", err)
 	}
 	return nil
