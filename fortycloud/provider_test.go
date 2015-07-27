@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-var testProviders map[string]terraform.ResourceProvider
-var testProvider *schema.Provider
+var testAccProviders map[string]terraform.ResourceProvider
+var testAccProvider *schema.Provider
 
 func init() {
-	testProvider = Provider().(*schema.Provider)
-	testProviders = map[string]terraform.ResourceProvider{
-		"fortycloud": testProvider,
+	testAccProvider = Provider().(*schema.Provider)
+	testAccProviders = map[string]terraform.ResourceProvider{
+		"fortycloud": testAccProvider,
 	}
 }
 
@@ -29,7 +29,7 @@ func TestProvider_impl(t *testing.T) {
 	var _ terraform.ResourceProvider = Provider()
 }
 
-func testPreCheck(t *testing.T) {
+func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("FORTYCLOUD_USERNAME"); v == "" {
 		t.Fatal("FORTYCLOUD_USERNAME must be set for acceptance tests")
 	}
