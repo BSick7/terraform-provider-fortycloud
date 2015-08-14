@@ -1,7 +1,6 @@
 package fortycloud
 
 import (
-	"log"
 	"os"
 	"testing"
 	
