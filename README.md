@@ -1,4 +1,5 @@
 # terraform-provider-fortycloud
+
 Terraform provider for Forty Cloud
 
 ## Usage
@@ -9,38 +10,33 @@ Provider information can be set up in a *.tf file or through environment variabl
 
 ```
 provider "fortycloud" {
-	username = "username"
-	password = "Passw0rd"
-	tenantName = "tenant"
-	formUsername = "formusername"
-	formPassword = "formpassword"
+	access_key = "access_key"
+	secret_key = "secret_key"
 }
 ```
 
 ```
-FORTYCLOUD_USERNAME = "username"
-FORTYCLOUD_PASSWORD = "password"
-FORTYCLOUD_TENANTNAME = "tenant"
-FORTYCLOUD_FORMUSERNAME = "formusername"
-FORTYCLOUD_FORMPASSWORD = "formpassword"
+FORTYCLOUD_ACCESS_KEY = "access_key"
+FORTYCLOUD_SECRET_KEY = "secret_key"
 ```
 
+## Install (download)
 
-### How to install
+Download the binary for your platform from [releases](https://github.com/bsick7/terraform-provider-fortycloud/releases).
 
-1. Download and install [Go](https://golang.org/doc/install). (follow instructions carefully)
-2. Download and extract contents to [terraform](https://terraform.io/downloads.html) directory.
-3. Place terraform directory on `PATH`.
-4. Build plugin and place with terraform binaries.
+## Install (build)
 
+You will need go1.6 and terraform 0.6.16 to build.
+
+### Build
+
+```bash
+$ mkdir -p $GOPATH/src/github.com/bsick7
+$ cd $GOPATH/src/github.com/bsick7
+$ git clone git@github.com:bsick7/terraform-provider-fortycloud.git
+$ make deps
+$ make install
 ```
-$ cd $GOPATH
-$ mdkir mdl && cd mdl
-$ git clone git@github.com/BSick7/terraform-provider-fortycloud
-$ go get
-$ go build && cp ./terraform-provider-fortycloud <insert terraform directory>
-```
-
 
 ### How to use
 
