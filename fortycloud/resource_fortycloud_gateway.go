@@ -2,7 +2,7 @@ package fortycloud
 
 import (
 	"fmt"
-	fc "github.com/bsick7/fortycloud-sdk-go/api"
+	fc "github.com/BSick7/fortycloud-sdk-go/api"
 	"github.com/hashicorp/terraform/helper/schema"
 	"log"
 	"time"

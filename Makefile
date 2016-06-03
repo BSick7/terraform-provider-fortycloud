@@ -26,4 +26,4 @@ release:
 	go get github.com/mitchellh/gox
 	go get github.com/tcnksm/ghr
 	gox -os "linux darwin windows" -arch "amd64 386" -ldflags "-X main.Version=`cat VERSION`" -output="dist/terraform-provider-fortycloud_{{.OS}}_{{.Arch}}"
-	ghr -t $$GITHUB_TOKEN -u bsick7 -r terraform-provider-fortycloud --replace `cat VERSION` dist/
+	ghr -t $$GITHUB_TOKEN -u BSick7 -r terraform-provider-fortycloud --replace `cat VERSION` dist/

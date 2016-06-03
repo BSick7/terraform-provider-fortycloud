@@ -1,7 +1,7 @@
 package fortycloud
 
 import (
-	fc "github.com/bsick7/fortycloud-sdk-go/api"
+	fc "github.com/BSick7/fortycloud-sdk-go/api"
 	"log"
 )
 

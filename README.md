@@ -31,9 +31,9 @@ You will need go1.6 and terraform 0.6.16 to build.
 ### Build
 
 ```bash
-$ mkdir -p $GOPATH/src/github.com/bsick7
-$ cd $GOPATH/src/github.com/bsick7
-$ git clone git@github.com:bsick7/terraform-provider-fortycloud.git
+$ mkdir -p $GOPATH/src/github.com/BSick7
+$ cd $GOPATH/src/github.com/BSick7
+$ git clone git@github.com:BSick7/terraform-provider-fortycloud.git
 $ make deps
 $ make install
 ```
@@ -41,3 +41,8 @@ $ make install
 ### How to use
 
 See [examples](/examples) directory for use cases.
+
+## Deploying to GitHub Releases
+
+`GITHUB_TOKEN` environment variable must exist in CircleCI with `public_repo` and `repo` scope.
+Travis automates this, but we are using CircleCI.

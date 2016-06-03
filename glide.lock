@@ -1,5 +1,5 @@
-hash: b6311084072f4626e6ede7decfba8e1eb9ec862112ec0bf9fc9261dff6c7210f
-updated: 2016-06-03T12:25:58.3819635-04:00
+hash: 42d305bf02cff9fc6c3091a711707c6bf4b07e486ef0a9c7545cdfc4168069ab
+updated: 2016-06-03T13:05:30.3409055-04:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: a3ebdb999b831ecb6ab8a226e31b07b2b9061c47
@@ -91,11 +91,11 @@ imports:
   - github.com\aws\aws-sdk-go\private\protocol\rest
   - github.com\aws\aws-sdk-go\private\protocol\xml\xmlutil
   - github.com\aws\aws-sdk-go\private\protocol\query\queryutil
-- name: github.com/bsick7/fortycloud-sdk-go
-  version: f72e2745a24a6e80efdee27acc1c07951993835f
+- name: github.com/BSick7/fortycloud-sdk-go
+  version: c832540e2c89b1422deb23c5c842a26b2174bc11
   subpackages:
-  - github.com\bsick7\fortycloud-sdk-go\api
-  - github.com\bsick7\fortycloud-sdk-go\internal
+  - github.com\BSick7\fortycloud-sdk-go\api
+  - github.com\BSick7\fortycloud-sdk-go\internal
 - name: github.com/go-ini/ini
   version: afbd495e5aaea13597b5e14fe514ddeaa4d76fc3
   subpackages:

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/bsick7/terraform-provider-fortycloud/fortycloud"
+	"github.com/BSick7/terraform-provider-fortycloud/fortycloud"
 	"github.com/hashicorp/terraform/plugin"
 )
 
