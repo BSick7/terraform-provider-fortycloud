@@ -1,24 +1,19 @@
 package fortycloud
 
 import (
-    "log"
-    
-    "github.com/mdl/fortycloud-sdk-go/api"
+	fc "github.com/bsick7/fortycloud-sdk-go/api"
+	"log"
 )
 
 type Config struct {
-    Username      string
-    Password      string
-    TenantName    string
-    FormUsername  string
-    FormPassword  string
+	AccessKey string
+	SecretKey string
 }
 
 // Client() returns a new Api for accessing FortyCloud.
-func (config *Config) Api() (*fortycloud.Api, error) {
-    api := fortycloud.NewApi()
-    api.SetApiCredentials(config.Username, config.Password, config.TenantName)
-    api.SetFormsCredentials(config.FormUsername, config.FormPassword)
-    log.Printf("[INFO] Forty Cloud Client configured for users: %s, %s", config.Username, config.FormUsername)
-    return api, nil
+func (config *Config) Api() (*fc.Api, error) {
+	api := fc.NewApi(nil)
+	api.SetAccessCredentials(config.AccessKey, config.SecretKey)
+	log.Printf("[INFO] Forty Cloud Client configured.")
+	return api, nil
 }

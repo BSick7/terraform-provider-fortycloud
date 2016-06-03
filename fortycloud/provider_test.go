@@ -3,7 +3,7 @@ package fortycloud
 import (
 	"os"
 	"testing"
-	
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -29,19 +29,10 @@ func TestProvider_impl(t *testing.T) {
 }
 
 func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("FORTYCLOUD_USERNAME"); v == "" {
-		t.Fatal("FORTYCLOUD_USERNAME must be set for acceptance tests")
+	if v := os.Getenv("FORTYCLOUD_ACCESS_KEY"); v == "" {
+		t.Fatal("FORTYCLOUD_ACCESS_KEY must be set for acceptance tests")
 	}
-	if v := os.Getenv("FORTYCLOUD_PASSWORD"); v == "" {
-		t.Fatal("FORTYCLOUD_PASSWORD must be set for acceptance tests")
-	}
-	if v := os.Getenv("FORTYCLOUD_TENANTNAME"); v == "" {
-		t.Fatal("FORTYCLOUD_TENANTNAME must be set for acceptance tests")
-	}
-	if v := os.Getenv("FORTYCLOUD_FORMUSERNAME"); v == "" {
-		t.Fatal("FORTYCLOUD_FORMUSERNAME must be set for acceptance tests")
-	}
-	if v := os.Getenv("FORTYCLOUD_FORMPASSWORD"); v == "" {
-		t.Fatal("FORTYCLOUD_FORMPASSWORD must be set for acceptance tests")
+	if v := os.Getenv("FORTYCLOUD_SECRET_KEY"); v == "" {
+		t.Fatal("FORTYCLOUD_SECRET_KEY must be set for acceptance tests")
 	}
 }
