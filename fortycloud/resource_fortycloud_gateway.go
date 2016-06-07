@@ -130,96 +130,73 @@ func resourceFcGatewayCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceFcGatewayRead(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
 
-	public_ip := d.Get("public_ip").(string)
-	gw, err := findGatewayByPublicIP(api, public_ip)
+	gw, err := api.Gateways.Get(d.Id())
 	if err != nil {
-		return fmt.Errorf("Error finding gateway: %s", err)
+		return fmt.Errorf("error retrieving gateway [%s]: %s", d.Id(), err)
 	}
 
-	if gw != nil {
-		d.SetId(gw.Id)
-		d.Set("fqdn", gw.Fqdn)
-		d.Set("overlay_address", gw.OverlayAddress)
-		d.Set("vpn_users_subnet", gw.VpnUsersSubnet)
-		d.Set("region", gw.Region)
-		d.Set("enable", gw.Enable)
-		d.Set("release", gw.Release)
-		d.Set("allow_ssh_to_everyone", gw.AllowSSHToEveryone)
-		d.Set("route_all_traffic_via_gw", gw.RouteAllTrafficViaGW)
-		d.Set("private_ip", gw.PrivateIP)
-		d.Set("identity_server_name", gw.IdentityServerName)
-		d.Set("state", gw.State)
-		d.Set("name", gw.Name)
-		d.Set("description", gw.Description)
-		d.Set("security_group", gw.SecurityGroup)
-		d.Set("open_vpn_protocol", gw.OpenVPNProtocol)
-		d.Set("gateway_as_dns", gw.GatewayAsDNS)
-		d.Set("direct_routes_only", gw.DirectRoutesOnly)
-		d.Set("ha_state", gw.HaState)
-	}
-
+	d.Set("fqdn", gw.Fqdn)
+	d.Set("overlay_address", gw.OverlayAddress)
+	d.Set("vpn_users_subnet", gw.VpnUsersSubnet)
+	d.Set("region", gw.Region)
+	d.Set("enable", gw.Enable)
+	d.Set("release", gw.Release)
+	d.Set("allow_ssh_to_everyone", gw.AllowSSHToEveryone)
+	d.Set("route_all_traffic_via_gw", gw.RouteAllTrafficViaGW)
+	d.Set("private_ip", gw.PrivateIP)
+	d.Set("identity_server_name", gw.IdentityServerName)
+	d.Set("state", gw.State)
+	d.Set("name", gw.Name)
+	d.Set("description", gw.Description)
+	d.Set("security_group", gw.SecurityGroup)
+	d.Set("open_vpn_protocol", gw.OpenVPNProtocol)
+	d.Set("gateway_as_dns", gw.GatewayAsDNS)
+	d.Set("direct_routes_only", gw.DirectRoutesOnly)
+	d.Set("ha_state", gw.HaState)
 	return nil
 }
 
 func resourceFcGatewayUpdate(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
 
-	public_ip := d.Get("public_ip").(string)
-	gw, err := findGatewayByPublicIP(api, public_ip)
+	gw, err := api.Gateways.Get(d.Id())
 	if err != nil {
-		return fmt.Errorf("Error finding gateway: %s", err)
+		return fmt.Errorf("error retrieving gateway [%s]: %s", d.Id(), err)
 	}
 
-	id := d.Id()
 	if val, ok := d.GetOk("name"); ok {
 		gw.Name = val.(string)
-	} else {
-		d.Set("name", gw.Name)
 	}
 
 	if val, ok := d.GetOk("description"); ok {
 		gw.Description = val.(string)
-	} else {
-		d.Set("description", gw.Description)
 	}
 
 	if val, ok := d.GetOk("allow_ssh_to_everyone"); ok {
 		gw.AllowSSHToEveryone = val.(bool)
-	} else {
-		d.Set("allow_ssh_to_everyone", gw.AllowSSHToEveryone)
 	}
 
 	if val, ok := d.GetOk("gateway_as_dns"); ok {
 		gw.GatewayAsDNS = val.(bool)
-	} else {
-		d.Set("gateway_as_dns", gw.GatewayAsDNS)
 	}
 
 	if val, ok := d.GetOk("identity_server_name"); ok {
 		gw.IdentityServerName = val.(string)
-	} else {
-		d.Set("identity_server_name", gw.IdentityServerName)
 	}
 
 	if val, ok := d.GetOk("open_vpn_protocol"); ok {
 		gw.OpenVPNProtocol = val.(string)
-	} else {
-		d.Set("open_vpn_protocol", gw.OpenVPNProtocol)
 	}
 
 	if val, ok := d.GetOk("enable"); ok {
 		gw.Enable = val.(bool)
-	} else {
-		d.Set("enable", gw.Enable)
 	}
 
 	if val, ok := d.GetOk("direct_routes_only"); ok {
 		gw.DirectRoutesOnly = val.(bool)
-	} else {
-		d.Set("direct_routes_only", gw.DirectRoutesOnly)
 	}
 
-	if _, err := api.Gateways.Update(id, gw); err != nil {
+	if _, err := api.Gateways.Update(d.Id(), gw); err != nil {
 		return err
 	}
 	return nil
