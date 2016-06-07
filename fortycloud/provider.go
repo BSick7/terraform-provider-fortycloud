@@ -25,7 +25,7 @@ func Provider() terraform.ResourceProvider {
 			},
 			"find_gateway_timeout": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    false,
+				Optional:    true,
 				Description: "The timeout duration to wait for a gateway to be found.",
 			},
 		},
