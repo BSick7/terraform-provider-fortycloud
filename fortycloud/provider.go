@@ -23,6 +23,11 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("FORTYCLOUD_SECRET_KEY", nil),
 				Description: "The secret key for FortyCloud.",
 			},
+			"find_gateway_timeout": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "The timeout duration to wait for a gateway to be found.",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -37,8 +42,9 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		AccessKey: d.Get("access_key").(string),
-		SecretKey: d.Get("secret_key").(string),
+		AccessKey:          d.Get("access_key").(string),
+		SecretKey:          d.Get("secret_key").(string),
+		FindGatewayTimeout: d.Get("find_gateway_timeout").(string),
 	}
 
 	log.Println("[INFO] Initializing Forty Cloud service")
