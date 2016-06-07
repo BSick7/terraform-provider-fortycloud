@@ -4,16 +4,14 @@ import (
 	"fmt"
 	fc "github.com/BSick7/fortycloud-sdk-go/api"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
-	"time"
 )
 
 type MissingGatewayError struct {
 	PublicIP string
 }
 
-func (err *MissingGatewayError) Error() string {
-	return fmt.Sprintf("Could not find gateway with Public IP=%s.", err.PublicIP)
+func (err MissingGatewayError) Error() string {
+	return fmt.Sprintf("could not find gateway with Public IP=%s.", err.PublicIP)
 }
 
 func resourceFcGateway() *schema.Resource {
@@ -111,9 +109,7 @@ func resourceFcGatewayCreate(d *schema.ResourceData, meta interface{}) error {
 
 	// Gateway is created by the box registering with FortyCloud
 	// Keep trying to find the registration
-	retryDelay := 15
-	retries := 90 / retryDelay
-	gw, err := findGatewayForCreate(api, public_ip, retries, retryDelay)
+	gw, err := api.FindGatewayByPublicIP(public_ip, true)
 	if err != nil {
 		return err
 	}
@@ -214,42 +210,9 @@ func resourceFcGatewayDelete(d *schema.ResourceData, meta interface{}) error {
 
 func resourceFcGatewayExists(d *schema.ResourceData, meta interface{}) (bool, error) {
 	api := meta.(*fc.Api)
-	gw, err := findGatewayByPublicIP(api, d.Get("public_ip").(string))
+	gw, err := api.FindGatewayByPublicIP(d.Get("public_ip").(string), false)
 	if err != nil {
 		return false, err
 	}
 	return gw != nil, nil
-}
-
-func findGatewayByPublicIP(api *fc.Api, public_ip string) (*fc.Gateway, error) {
-	gws, err := api.Gateways.All()
-	if err != nil {
-		return nil, fmt.Errorf("Error getting gateways: %s", err)
-	}
-
-	for _, cur := range gws {
-		if cur.PublicIP == public_ip {
-			return &cur, nil
-		}
-	}
-	return nil, nil
-}
-
-func findGatewayForCreate(api *fc.Api, public_ip string, retries int, retryDelay int) (gw fc.Gateway, err error) {
-	for i := 0; i < retries; i++ {
-		gw, err := findGatewayByPublicIP(api, public_ip)
-		if err != nil {
-			break
-		}
-		if gw == nil {
-			if (i + 1) == retries {
-				err = &MissingGatewayError{PublicIP: public_ip}
-				break
-			}
-			log.Printf("Waiting %d seconds to locate gateway (%s)...\n", retryDelay, public_ip)
-			time.Sleep(time.Duration(retryDelay) * time.Second)
-			continue
-		}
-	}
-	return
 }

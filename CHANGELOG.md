@@ -1,3 +1,13 @@
+## 0.2.1
+
+FEATURES
+
+  * Added configurable timeout to find gateway.
+
+IMPROVEMENTS
+
+  * Aligned closer with terraform plugin operations. 
+
 ## 0.2.0
 
 INCOMPATIBILITIES
