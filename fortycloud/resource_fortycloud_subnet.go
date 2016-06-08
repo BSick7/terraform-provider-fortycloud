@@ -51,6 +51,8 @@ func resourceFcSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 		Cidr:           d.Get("cidr").(string),
 		DisableAutoNAT: d.Get("disable_auto_nat").(bool),
 	}
+	subnet.SetGatewayID(d.Get("gateway_id").(string))
+	subnet.SetResourceGroupID(d.Get("resource_group_id").(string))
 
 	existing, err := api.FindSubnet(subnet.Cidr, subnet.GatewayID())
 	if err != nil {

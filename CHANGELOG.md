@@ -1,3 +1,10 @@
+## 0.2.6
+
+IMPROVEMENTS
+
+  * Not attempting to assign gateway/resource group to subnet if none specified.
+  * Matching legacy format for subnet gatewayRef.
+
 ## 0.2.5
 
 IMPROVEMENTS
