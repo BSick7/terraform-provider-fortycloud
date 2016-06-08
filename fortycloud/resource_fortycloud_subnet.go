@@ -4,7 +4,6 @@ import (
 	"fmt"
 	fc "github.com/BSick7/fortycloud-sdk-go/api"
 	"github.com/hashicorp/terraform/helper/schema"
-	"strings"
 )
 
 func resourceFcSubnet() *schema.Resource {
@@ -46,36 +45,30 @@ func resourceFcSubnet() *schema.Resource {
 func resourceFcSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
 
-	newSubnet := &fc.Subnet{
+	subnet := &fc.Subnet{
 		Name:           d.Get("name").(string),
 		Description:    d.Get("description").(string),
 		Cidr:           d.Get("cidr").(string),
 		DisableAutoNAT: d.Get("disable_auto_nat").(bool),
 	}
 
-	subnet, err := api.Subnets.Create(newSubnet)
+	existing, err := api.FindSubnet(subnet.Cidr, subnet.GatewayID())
 	if err != nil {
-		return fmt.Errorf("Error creating subnet: %s", err)
+		return fmt.Errorf("error matching with existing subnet: %s", err)
 	}
-	d.SetId(subnet.Id)
-
-	// Assign gateway to subnet
-	gw_id := d.Get("gateway_id").(string)
-	res_gw_id, err := assignSubnetGateway(api, subnet.Id, gw_id)
-	if err != nil {
-		return fmt.Errorf("Could not assign gateway to subnet: %s", err)
+	if existing != nil {
+		// if we find an existing subnet matched on cidr and gateway id
+		// it was probably created by the gateway when registered
+		d.SetId(existing.Id)
+	} else {
+		newSubnet, err := api.Subnets.Create(subnet)
+		if err != nil {
+			return fmt.Errorf("error creating subnet: %s", err)
+		}
+		d.SetId(newSubnet.Id)
 	}
-	d.Set("gateway_id", res_gw_id)
 
-	// Assign resource group to subnet
-	rg_id := d.Get("resource_group_id").(string)
-	res_rg_id, err := assignSubnetResourceGroup(api, subnet.Id, rg_id)
-	if err != nil {
-		return fmt.Errorf("Could not assign resource group to subnet: %s", err)
-	}
-	d.Set("resource_group_id", res_rg_id)
-
-	return nil
+	return resourceFcSubnetUpdate(d, meta)
 }
 
 func resourceFcSubnetRead(d *schema.ResourceData, meta interface{}) error {
@@ -84,58 +77,44 @@ func resourceFcSubnetRead(d *schema.ResourceData, meta interface{}) error {
 
 	subnet, err := api.Subnets.Get(id)
 	if err != nil {
-		return fmt.Errorf("Could not retrieve subnet: %s", err)
+		return fmt.Errorf("error retrieving subnet: %s", err)
 	}
 
 	d.Set("name", subnet.Name)
 	d.Set("description", subnet.Description)
 	d.Set("cidr", subnet.Cidr)
 	d.Set("disable_auto_nat", subnet.DisableAutoNAT)
-	d.Set("gateway_id", parseGatewayIdFromRef(subnet.GatewayRef))
-	d.Set("resource_group_id", parseResourceGroupIdFromRef(subnet.ResourceGroupRef))
+	d.Set("gateway_id", subnet.GatewayID())
+	d.Set("resource_group_id", subnet.ResourceGroupID())
 
 	return nil
 }
 
 func resourceFcSubnetUpdate(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
-	id := d.Id()
 
-	subnet, err := api.Subnets.Get(id)
-	if err != nil {
-		return fmt.Errorf("Could not retrieve subnet: %s", err)
+	subnet := &fc.Subnet{
+		Id:             d.Id(),
+		Name:           d.Get("name").(string),
+		Description:    d.Get("description").(string),
+		Cidr:           d.Get("cidr").(string),
+		DisableAutoNAT: d.Get("disable_auto_nat").(bool),
+	}
+	subnet.SetGatewayID(d.Get("gateway_id").(string))
+	subnet.SetResourceGroupID(d.Get("resource_group_id").(string))
+
+	if _, err3 := api.Subnets.Update(subnet.Id, subnet); err3 != nil {
+		return fmt.Errorf("error updating subnet: %s", err3)
 	}
 
-	subnet.Name = d.Get("name").(string)
-	subnet.Description = d.Get("description").(string)
-	subnet.Cidr = d.Get("cidr").(string)
-	subnet.DisableAutoNAT = d.Get("disable_auto_nat").(bool)
-
-	_, err3 := api.Subnets.Update(id, subnet)
-	if err3 != nil {
-		return fmt.Errorf("Could not update subnet: %s", err3)
+	// update gateway on subnet
+	if _, err := api.Subnets.AssignGateway(subnet.Id, subnet.GatewayID()); err != nil {
+		return fmt.Errorf("error assigning gateway to subnet: %s", err)
 	}
 
-	// Update gateway on subnet
-	cur_gw_id := parseGatewayIdFromRef(subnet.GatewayRef)
-	new_gw_id := d.Get("gateway_id").(string)
-	if cur_gw_id != new_gw_id {
-		gw_id, err := assignSubnetGateway(api, id, new_gw_id)
-		if err != nil {
-			return fmt.Errorf("Could not update subnet gateway: %s", err)
-		}
-		d.Set("gateway_id", gw_id)
-	}
-
-	// Update resource group on subnet
-	cur_rg_id := parseResourceGroupIdFromRef(subnet.ResourceGroupRef)
-	new_rg_id := d.Get("resource_group_id").(string)
-	if cur_rg_id != new_rg_id {
-		rg_id, err := assignSubnetResourceGroup(api, id, new_rg_id)
-		if err != nil {
-			return fmt.Errorf("Could not update subnet resource group: %s", err)
-		}
-		d.Set("resource_group_id", rg_id)
+	// update resource group on subnet
+	if _, err := api.Subnets.AssignResourceGroup(subnet.Id, subnet.ResourceGroupID()); err != nil {
+		return fmt.Errorf("error assigning resource group to subnet: %s", err)
 	}
 
 	return nil
@@ -149,48 +128,8 @@ func resourceFcSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if err := api.Subnets.Delete(id); err != nil {
-		return fmt.Errorf("Could not delete subnet: %s", err)
+		return fmt.Errorf("error deleting subnet: %s", err)
 	}
 
 	return nil
-}
-
-func assignSubnetGateway(api *fc.Api, subnet_id string, gw_id string) (string, error) {
-	if len(gw_id) <= 0 {
-		return "", nil
-	}
-	mod, err := api.Subnets.AssignGateway(subnet_id, gw_id)
-	if err != nil {
-		return "", fmt.Errorf("Could not update subnet's gateway: %s", err)
-	}
-	return parseGatewayIdFromRef(mod.GatewayRef), nil
-}
-
-func assignSubnetResourceGroup(api *fc.Api, subnet_id string, rg_id string) (string, error) {
-	if len(rg_id) <= 0 {
-		return "", nil
-	}
-	mod, err := api.Subnets.AssignResourceGroup(subnet_id, rg_id)
-	if err != nil {
-		return "", fmt.Errorf("Could not update subnet's resource group: %s", err)
-	}
-	return parseResourceGroupIdFromRef(mod.ResourceGroupRef), nil
-}
-
-func parseGatewayIdFromRef(ref string) string {
-	// Expected input: https://api.fortycloud.net/restapi/v0.4/gateways/4013
-	tokens := strings.Split(ref, "/")
-	if len(tokens) < 2 || tokens[len(tokens)-2] != "gateways" {
-		return ""
-	}
-	return tokens[len(tokens)-1]
-}
-
-func parseResourceGroupIdFromRef(ref string) string {
-	// Expected input: https://api.fortycloud.net/restapi/v0.4/resource-groups/2069
-	tokens := strings.Split(ref, "/")
-	if len(tokens) < 2 || tokens[len(tokens)-2] != "resource-groups" {
-		return ""
-	}
-	return tokens[len(tokens)-1]
 }

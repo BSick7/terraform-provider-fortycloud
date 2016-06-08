@@ -1,8 +1,18 @@
+## 0.2.4
+
+IMPROVEMENTS
+
+  * Aligned subnet resource with terraform plugin operations.
+
+BUG FIXES
+
+  * Subnet create/update omits `gatewayRef` and `resourceGroupRef`.
+
 ## 0.2.3
 
 BUG FIXES
 
-  * Gateway update no longer crashes when trying to send `identityServerName` and `release` (omitted).
+  * Gateway update no longer crashes. Omitting `identityServerName` and `release`.
 
 ## 0.2.2
 
@@ -18,7 +28,7 @@ FEATURES
 
 IMPROVEMENTS
 
-  * Aligned closer with terraform plugin operations. 
+  * Aligned gateway resource with terraform plugin operations. 
 
 ## 0.2.0
 
