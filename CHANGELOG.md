@@ -1,3 +1,9 @@
+## 0.2.2
+
+BUG FIXES
+
+  * Gateway fields are now editable.
+
 ## 0.2.1
 
 FEATURES

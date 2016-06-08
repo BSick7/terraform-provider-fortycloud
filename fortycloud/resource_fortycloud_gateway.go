@@ -27,6 +27,46 @@ func resourceFcGateway() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"name": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+			},
+			"description": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+			},
+			"allow_ssh_to_everyone": &schema.Schema{
+				Type:     schema.TypeBool,
+				Computed: true,
+				Optional: true,
+			},
+			"gateway_as_dns": &schema.Schema{
+				Type:     schema.TypeBool,
+				Computed: true,
+				Optional: true,
+			},
+			"identity_server_name": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+			},
+			"open_vpn_protocol": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+			},
+			"enable": &schema.Schema{
+				Type:     schema.TypeBool,
+				Computed: true,
+				Optional: true,
+			},
+			"direct_routes_only": &schema.Schema{
+				Type:     schema.TypeBool,
+				Computed: true,
+				Optional: true,
+			},
 			"fqdn": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -43,16 +83,8 @@ func resourceFcGateway() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"enable": &schema.Schema{
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
 			"release": &schema.Schema{
 				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"allow_ssh_to_everyone": &schema.Schema{
-				Type:     schema.TypeBool,
 				Computed: true,
 			},
 			"route_all_traffic_via_gw": &schema.Schema{
@@ -63,36 +95,12 @@ func resourceFcGateway() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"identity_server_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 			"state": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"description": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
 			},
 			"security_group": &schema.Schema{
 				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"open_vpn_protocol": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"gateway_as_dns": &schema.Schema{
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
-			"direct_routes_only": &schema.Schema{
-				Type:     schema.TypeBool,
 				Computed: true,
 			},
 			"ha_state": &schema.Schema{
