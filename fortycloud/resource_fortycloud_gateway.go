@@ -201,7 +201,7 @@ func resourceFcGatewayUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if _, err := api.Gateways.Update(d.Id(), gw); err != nil {
-		return err
+		return fmt.Errorf("error updating gateway: %s", err)
 	}
 	return nil
 }
@@ -211,7 +211,7 @@ func resourceFcGatewayDelete(d *schema.ResourceData, meta interface{}) error {
 	id := d.Id()
 
 	if err := api.Gateways.Delete(id); err != nil {
-		return fmt.Errorf("Could not delete gateway: %s", err)
+		return fmt.Errorf("error deleting gateway: %s", err)
 	}
 	return nil
 }

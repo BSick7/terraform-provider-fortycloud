@@ -1,3 +1,9 @@
+## 0.2.3
+
+BUG FIXES
+
+  * Gateway update no longer crashes when trying to send `identityServerName` and `release` (omitted).
+
 ## 0.2.2
 
 BUG FIXES
