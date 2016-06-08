@@ -73,11 +73,19 @@ func resourceFcSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceFcSubnetRead(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
-	id := d.Id()
 
-	subnet, err := api.Subnets.Get(id)
+	if d.Id() == "" {
+		return nil
+	}
+
+	subnet, err := api.Subnets.Get(d.Id())
 	if err != nil {
 		return fmt.Errorf("error retrieving subnet: %s", err)
+	}
+	if subnet == nil {
+		d.MarkNewResource()
+		d.SetId("")
+		return nil
 	}
 
 	d.Set("name", subnet.Name)
@@ -92,6 +100,10 @@ func resourceFcSubnetRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceFcSubnetUpdate(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
+
+	if d.Id() == "" {
+		return nil
+	}
 
 	subnet := &fc.Subnet{
 		Id:             d.Id(),
@@ -122,12 +134,12 @@ func resourceFcSubnetUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceFcSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
-	id := d.Id()
-	if len(id) == 0 {
+
+	if d.Id() == "" {
 		return nil
 	}
 
-	if err := api.Subnets.Delete(id); err != nil {
+	if err := api.Subnets.Delete(d.Id()); err != nil {
 		return fmt.Errorf("error deleting subnet: %s", err)
 	}
 

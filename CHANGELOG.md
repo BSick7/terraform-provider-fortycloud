@@ -1,3 +1,9 @@
+## 0.2.5
+
+IMPROVEMENTS
+
+  * Gracefully handling missing gateways, subnets, and connections.
+
 ## 0.2.4
 
 IMPROVEMENTS

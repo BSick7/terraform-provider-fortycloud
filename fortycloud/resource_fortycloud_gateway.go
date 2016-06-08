@@ -134,9 +134,19 @@ func resourceFcGatewayCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceFcGatewayRead(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
 
+	if d.Id() == "" {
+		return nil
+	}
+
 	gw, err := api.Gateways.Get(d.Id())
 	if err != nil {
 		return fmt.Errorf("error retrieving gateway [%s]: %s", d.Id(), err)
+	}
+
+	if gw == nil {
+		d.MarkNewResource()
+		d.SetId("")
+		return nil
 	}
 
 	d.Set("fqdn", gw.Fqdn)
@@ -163,9 +173,18 @@ func resourceFcGatewayRead(d *schema.ResourceData, meta interface{}) error {
 func resourceFcGatewayUpdate(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
 
+	if d.Id() == "" {
+		return nil
+	}
+
 	gw, err := api.Gateways.Get(d.Id())
 	if err != nil {
 		return fmt.Errorf("error retrieving gateway [%s]: %s", d.Id(), err)
+	}
+	if gw == nil {
+		d.MarkNewResource()
+		d.SetId("")
+		return nil
 	}
 
 	if val, ok := d.GetOk("name"); ok {
@@ -208,9 +227,12 @@ func resourceFcGatewayUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceFcGatewayDelete(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
-	id := d.Id()
 
-	if err := api.Gateways.Delete(id); err != nil {
+	if d.Id() == "" {
+		return nil
+	}
+
+	if err := api.Gateways.Delete(d.Id()); err != nil {
 		return fmt.Errorf("error deleting gateway: %s", err)
 	}
 	return nil
