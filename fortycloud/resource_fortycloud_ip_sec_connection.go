@@ -63,11 +63,20 @@ func resourceFcIPSecConnectionCreate(d *schema.ResourceData, meta interface{}) e
 
 func resourceFcIPSecConnectionRead(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
-	id := d.Id()
 
-	conn, err := api.IPSecConnections.Get(id)
+	if d.Id() == "" {
+		return nil
+	}
+
+	conn, err := api.IPSecConnections.Get(d.Id())
 	if err != nil {
 		return fmt.Errorf("Could not retrieve connection: %s", err)
+	}
+
+	if conn == nil {
+		d.MarkNewResource()
+		d.SetId("")
+		return nil
 	}
 
 	d.Set("name", conn.Name)
@@ -81,9 +90,12 @@ func resourceFcIPSecConnectionRead(d *schema.ResourceData, meta interface{}) err
 
 func resourceFcIPSecConnectionUpdate(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
-	id := d.Id()
 
-	conn, err := api.IPSecConnections.Get(id)
+	if d.Id() == "" {
+		return nil
+	}
+
+	conn, err := api.IPSecConnections.Get(d.Id())
 	if err != nil {
 		return fmt.Errorf("Could not retrieve connection: %s", err)
 	}
@@ -98,7 +110,7 @@ func resourceFcIPSecConnectionUpdate(d *schema.ResourceData, meta interface{}) e
 		conn.Enable = val.(bool)
 	}
 
-	if _, err := api.IPSecConnections.Update(id, conn); err != nil {
+	if _, err := api.IPSecConnections.Update(d.Id(), conn); err != nil {
 		return fmt.Errorf("Could not update connection: %s", err)
 	}
 
@@ -107,12 +119,12 @@ func resourceFcIPSecConnectionUpdate(d *schema.ResourceData, meta interface{}) e
 
 func resourceFcIPSecConnectionDelete(d *schema.ResourceData, meta interface{}) error {
 	api := meta.(*fc.Api)
+
 	if d.Id() == "" {
 		return nil
 	}
-	id := d.Id()
 
-	if err := api.IPSecConnections.Delete(id); err != nil {
+	if err := api.IPSecConnections.Delete(d.Id()); err != nil {
 		return fmt.Errorf("Could not delete connection: %s", err)
 	}
 
