@@ -57,6 +57,19 @@ func resourceFcGateway() *schema.Resource {
 				Computed: true,
 				Optional: true,
 			},
+			"open_vpn_client_routes": &schema.Schema{
+				Type:     schema.TypeSet,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
+			},
+			"open_vpn_client_cidrs": &schema.Schema{
+				Type:     schema.TypeSet,
+				Computed: true,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
+			},
 			"enable": &schema.Schema{
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -164,9 +177,17 @@ func resourceFcGatewayRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("description", gw.Description)
 	d.Set("security_group", gw.SecurityGroup)
 	d.Set("open_vpn_protocol", gw.OpenVPNProtocol)
+	d.Set("open_vpn_client_routes", gw.ClientRoutes)
 	d.Set("gateway_as_dns", gw.GatewayAsDNS)
 	d.Set("direct_routes_only", gw.DirectRoutesOnly)
 	d.Set("ha_state", gw.HaState)
+
+	cidrs, err := matchSubnetNamesToCidrs(api, gw.ClientRoutes)
+	if err != nil {
+		return fmt.Errorf("error syncing open_vpn_cidrs: %s", err)
+	}
+	d.Set("open_vpn_client_cidrs", cidrs)
+
 	return nil
 }
 
@@ -207,16 +228,24 @@ func resourceFcGatewayUpdate(d *schema.ResourceData, meta interface{}) error {
 		gw.IdentityServerName = val.(string)
 	}
 
-	if val, ok := d.GetOk("open_vpn_protocol"); ok {
-		gw.OpenVPNProtocol = val.(string)
-	}
-
 	if val, ok := d.GetOk("enable"); ok {
 		gw.Enable = val.(bool)
 	}
 
 	if val, ok := d.GetOk("direct_routes_only"); ok {
 		gw.DirectRoutesOnly = val.(bool)
+	}
+
+	if val, ok := d.GetOk("open_vpn_protocol"); ok {
+		gw.OpenVPNProtocol = val.(string)
+	}
+
+	if val, ok := d.GetOk("open_vpn_client_cidrs"); ok {
+		names, err := matchCidrsToSubnetNames(api, val.(*schema.Set).List())
+		if err != nil {
+			return fmt.Errorf("error syncing open_vpn_client_routes: %s", err)
+		}
+		gw.ClientRoutes = names
 	}
 
 	if _, err := api.Gateways.Update(d.Id(), gw); err != nil {
@@ -245,4 +274,48 @@ func resourceFcGatewayExists(d *schema.ResourceData, meta interface{}) (bool, er
 		return false, err
 	}
 	return gw != nil, nil
+}
+
+func matchSubnetNamesToCidrs(api *fc.Api, names []string) ([]string, error) {
+	if len(names) <= 0 {
+		return []string{}, nil
+	}
+
+	subnets, err := api.Subnets.All()
+	if err != nil {
+		return []string{}, err
+	}
+
+	var cidrs []string
+	for _, subnet := range subnets {
+		for _, name := range names {
+			if subnet.Name == name {
+				cidrs = append(cidrs, subnet.Cidr)
+				break
+			}
+		}
+	}
+	return cidrs, nil
+}
+
+func matchCidrsToSubnetNames(api *fc.Api, cidrs []interface{}) ([]string, error) {
+	if len(cidrs) <= 0 {
+		return []string{}, nil
+	}
+
+	subnets, err := api.Subnets.All()
+	if err != nil {
+		return []string{}, err
+	}
+
+	var names []string
+	for _, subnet := range subnets {
+		for _, cidr := range cidrs {
+			if subnet.Cidr == cidr.(string) {
+				names = append(names, subnet.Name)
+				break
+			}
+		}
+	}
+	return names, nil
 }

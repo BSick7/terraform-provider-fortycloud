@@ -1,3 +1,14 @@
+## 0.2.7
+
+FEATURES
+
+  * Added `fortycloud_registration_token` resource.
+  * Added `fortycloud_gateway.open_vpn_client_cidrs` to be able to set "VPN Client Routes".
+
+IMPROVEMENTS
+
+  * Setting `fortycloud_subnet.gateway_id` to "" will clear the assignment from the subnet.
+
 ## 0.2.6
 
 IMPROVEMENTS
