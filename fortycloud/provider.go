@@ -32,9 +32,10 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"fortycloud_gateway":           resourceFcGateway(),
-			"fortycloud_ip_sec_connection": resourceFcIPSecConnection(),
-			"fortycloud_subnet":            resourceFcSubnet(),
+			"fortycloud_gateway":            resourceFcGateway(),
+			"fortycloud_ip_sec_connection":  resourceFcIPSecConnection(),
+			"fortycloud_registration_token": resourceFcRegistrationToken(),
+			"fortycloud_subnet":             resourceFcSubnet(),
 		},
 
 		ConfigureFunc: providerConfigure,
