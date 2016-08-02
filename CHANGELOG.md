@@ -1,3 +1,9 @@
+## 0.3.0
+
+INCOMPABILITIES:
+
+  * Upgraded to terraform 0.7.
+
 ## 0.2.7
 
 FEATURES
