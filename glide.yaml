@@ -1,6 +1,6 @@
 package: github.com/BSick7/terraform-provider-fortycloud
 import:
 - package: github.com/hashicorp/terraform
-  version: 0.6.16
+  version: 0.7.0
 - package: github.com/BSick7/fortycloud-sdk-go
   version: 0.2.7
