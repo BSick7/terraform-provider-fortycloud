@@ -14,7 +14,7 @@ dependencies:
   cache_directories:
     - /home/ubuntu/go
   pre:
-    - bash -c "$(curl -fsSL https://gist.githubusercontent.com/newtonlabs/aff90370d4cf8bc3ea2e/raw)"
+    - bash -c "$(curl -fsSL https://gist.github.com/BSick7/5ca8ad3eeec138a0bf51da775de4279e/raw)"
     - go version
   override:
     - cd "$BUILD_PATH" && make deps
