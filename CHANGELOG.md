@@ -1,3 +1,9 @@
+## 0.5.0
+
+INCOMPATIBILITIES:
+
+  * Upgraded to terraform 0.9.
+
 ## 0.4.0
 
 INCOMPATIBILITIES:
